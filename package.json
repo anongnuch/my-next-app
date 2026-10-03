@@ -6,17 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:reset": "node scripts/reset-db.mjs",
+    "db:diagram": "node scripts/generate-erd.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:report": "vitest run --reporter=default --reporter=json --outputFile=reports/vitest.json --coverage && node scripts/generate-test-report.mjs"
   },
   "dependencies": {
+    "better-sqlite3": "^13.0.3",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/node": "26.6.4",
+    "@types/react": "19.3.0",
+    "@vitest/coverage-v8": "^5.0.3",
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "vitest": "^5.0.3"
   }
 }

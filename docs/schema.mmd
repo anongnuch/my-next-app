@@ -1,0 +1,59 @@
+erDiagram
+    banners {
+        TEXT id PK "required"
+        TEXT variant "required"
+        TEXT headline "required"
+        TEXT body "nullable"
+        TEXT cta_label "nullable"
+        TEXT cta_href "nullable"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    brands {
+        TEXT id PK "required"
+        TEXT label "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    categories {
+        TEXT slug PK "required"
+        TEXT name "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    collection_items {
+        TEXT collection_slug PK,FK "required"
+        TEXT product_id PK,FK "required"
+        INTEGER position "required"
+    }
+    collections {
+        TEXT slug PK "required"
+        TEXT title "required"
+        TEXT featured_product_id FK "nullable"
+        TEXT expires_at "nullable"
+    }
+    products {
+        TEXT id PK "required"
+        TEXT brand "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        REAL price "required"
+        REAL old_price "nullable"
+        TEXT currency "required, default 'USD'"
+        REAL rating "required, default 0"
+        INTEGER reviews "required, default 0"
+        TEXT category FK "required"
+        INTEGER stock "required, default 0"
+        INTEGER sold "nullable"
+        TEXT badge "nullable"
+        TEXT created_at "required"
+    }
+    products ||--o{ collection_items : "product_id → id"
+    collections ||--o{ collection_items : "collection_slug → slug"
+    products |o--o{ collections : "featured_product_id → id"
+    categories ||--o{ products : "category → name"

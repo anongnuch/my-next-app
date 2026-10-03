@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Farmart Database Schema</title>
+    <style>
+      :root {
+        --brand: #fdbc1f;
+        --ink: #1f2223;
+        --mute: #7b8085;
+        --hairline: #e7e9eb;
+        --canvas: #ffffff;
+        --canvas-soft: #f5f6f7;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--canvas);
+        color: var(--ink);
+        font-family: Geist, Inter, system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      header { border-bottom: 1px solid var(--hairline); }
+      .wrap { max-width: 1240px; margin: 0 auto; padding: 32px 16px; }
+      .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+      .mark {
+        width: 40px; height: 40px; border-radius: 9999px; background: var(--brand);
+        display: grid; place-items: center; font-size: 20px;
+      }
+      h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.55px; }
+      .chip {
+        background: var(--canvas-soft); color: var(--mute); border-radius: 4px;
+        padding: 4px 8px; font: 500 11px ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .actions { margin-left: auto; display: flex; gap: 8px; }
+      a.btn, button.btn {
+        height: 40px; display: inline-flex; align-items: center; gap: 6px;
+        padding: 0 16px; border-radius: 4px; border: 1px solid var(--hairline);
+        background: var(--canvas); color: var(--ink); font: 700 13px inherit;
+        text-decoration: none; cursor: pointer;
+      }
+      a.btn.primary { background: var(--brand); border-color: var(--brand); }
+      .note { margin-top: 12px; font-size: 11px; color: var(--mute); }
+      .panel {
+        border: 1px solid var(--hairline); border-radius: 6px; overflow: auto;
+        padding: 24px; background: var(--canvas);
+      }
+      h2 { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 20px; }
+      table { width: 100%; border-collapse: collapse; text-align: left; }
+      thead tr { background: var(--canvas-soft); }
+      th {
+        font: 400 11px inherit; text-transform: uppercase; letter-spacing: 0.025em;
+        color: var(--mute); padding: 10px 12px; border-bottom: 1px solid var(--hairline);
+      }
+      td { padding: 10px 12px; font-size: 12px; border-bottom: 1px solid var(--hairline); }
+      tbody tr:last-child td { border-bottom: 0; }
+      td:first-child { font-weight: 600; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      pre.source {
+        border: 1px solid var(--hairline); border-radius: 6px; background: var(--canvas-soft);
+        padding: 16px; overflow: auto; font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      .fallback { color: var(--mute); font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="wrap">
+        <div class="row">
+          <span class="mark">🌿</span>
+          <h1>Farmart Database Schema</h1>
+          <span class="chip">SQLite · 6 tables · 42 columns · 4 relationships · 57 rows</span>
+          <div class="actions">
+            <button class="btn" id="copy">Copy Mermaid</button>
+            <a class="btn primary" href="/">Back to the storefront</a>
+          </div>
+        </div>
+        <p class="note">
+          Generated from <code>data/farmart.db</code> by introspection — run
+          <code>npm run db:diagram</code> to refresh after a schema change.
+        </p>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="panel">
+        <pre class="mermaid" id="diagram">erDiagram
+    banners {
+        TEXT id PK "required"
+        TEXT variant "required"
+        TEXT headline "required"
+        TEXT body "nullable"
+        TEXT cta_label "nullable"
+        TEXT cta_href "nullable"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    brands {
+        TEXT id PK "required"
+        TEXT label "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    categories {
+        TEXT slug PK "required"
+        TEXT name "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    collection_items {
+        TEXT collection_slug PK,FK "required"
+        TEXT product_id PK,FK "required"
+        INTEGER position "required"
+    }
+    collections {
+        TEXT slug PK "required"
+        TEXT title "required"
+        TEXT featured_product_id FK "nullable"
+        TEXT expires_at "nullable"
+    }
+    products {
+        TEXT id PK "required"
+        TEXT brand "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        REAL price "required"
+        REAL old_price "nullable"
+        TEXT currency "required, default 'USD'"
+        REAL rating "required, default 0"
+        INTEGER reviews "required, default 0"
+        TEXT category FK "required"
+        INTEGER stock "required, default 0"
+        INTEGER sold "nullable"
+        TEXT badge "nullable"
+        TEXT created_at "required"
+    }
+    products ||--o{ collection_items : "product_id → id"
+    collections ||--o{ collection_items : "collection_slug → slug"
+    products |o--o{ collections : "featured_product_id → id"
+    categories ||--o{ products : "category → name"
+</pre>
+        <p class="fallback" id="fallback" hidden>
+          The Mermaid renderer could not be loaded from the CDN. The source above
+          is still valid Mermaid — paste it into mermaid.live.
+        </p>
+      </section>
+
+      <section style="margin-top: 32px">
+        <h2>Tables</h2>
+        <div class="panel" style="padding: 0">
+          <table>
+            <thead>
+              <tr><th>Table</th><th>Columns</th><th>Foreign keys</th><th>Rows</th></tr>
+            </thead>
+            <tbody>
+          <tr>
+            <td>banners</td>
+            <td>9</td>
+            <td>0</td>
+            <td>2</td>
+          </tr>
+          <tr>
+            <td>brands</td>
+            <td>6</td>
+            <td>0</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>categories</td>
+            <td>5</td>
+            <td>0</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>collection_items</td>
+            <td>3</td>
+            <td>2</td>
+            <td>16</td>
+          </tr>
+          <tr>
+            <td>collections</td>
+            <td>4</td>
+            <td>1</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>products</td>
+            <td>15</td>
+            <td>1</td>
+            <td>24</td>
+          </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="margin-top: 32px">
+        <h2>Mermaid source</h2>
+        <pre class="source" id="source">erDiagram
+    banners {
+        TEXT id PK "required"
+        TEXT variant "required"
+        TEXT headline "required"
+        TEXT body "nullable"
+        TEXT cta_label "nullable"
+        TEXT cta_href "nullable"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    brands {
+        TEXT id PK "required"
+        TEXT label "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    categories {
+        TEXT slug PK "required"
+        TEXT name "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        INTEGER position "required"
+    }
+    collection_items {
+        TEXT collection_slug PK,FK "required"
+        TEXT product_id PK,FK "required"
+        INTEGER position "required"
+    }
+    collections {
+        TEXT slug PK "required"
+        TEXT title "required"
+        TEXT featured_product_id FK "nullable"
+        TEXT expires_at "nullable"
+    }
+    products {
+        TEXT id PK "required"
+        TEXT brand "required"
+        TEXT title "required"
+        TEXT art "nullable"
+        TEXT tint "nullable"
+        REAL price "required"
+        REAL old_price "nullable"
+        TEXT currency "required, default 'USD'"
+        REAL rating "required, default 0"
+        INTEGER reviews "required, default 0"
+        TEXT category FK "required"
+        INTEGER stock "required, default 0"
+        INTEGER sold "nullable"
+        TEXT badge "nullable"
+        TEXT created_at "required"
+    }
+    products ||--o{ collection_items : "product_id → id"
+    collections ||--o{ collection_items : "collection_slug → slug"
+    products |o--o{ collections : "featured_product_id → id"
+    categories ||--o{ products : "category → name"
+</pre>
+      </section>
+    </main>
+
+    <script type="module">
+      const source = document.getElementById("source").textContent;
+
+      document.getElementById("copy").addEventListener("click", async (event) => {
+        await navigator.clipboard.writeText(source);
+        event.target.textContent = "Copied";
+        setTimeout(() => (event.target.textContent = "Copy Mermaid"), 1500);
+      });
+
+      try {
+        const { default: mermaid } = await import(
+          "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"
+        );
+        mermaid.initialize({
+          startOnLoad: true,
+          theme: "base",
+          themeVariables: {
+            primaryColor: "#fff7e3",
+            primaryBorderColor: "#fdbc1f",
+            primaryTextColor: "#1f2223",
+            lineColor: "#7b8085",
+            fontFamily: "Geist, Inter, system-ui, sans-serif",
+          },
+        });
+        await mermaid.run({ querySelector: "pre.mermaid" });
+      } catch {
+        document.getElementById("fallback").hidden = false;
+      }
+    </script>
+  </body>
+</html>

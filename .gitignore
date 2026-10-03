@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local SQLite database (generated, seeded from app/lib/data.js)
+/data
+
+# vitest coverage report (generated)
+/coverage
+
+# generated test artefacts
+/reports
+/public/test-report.html
