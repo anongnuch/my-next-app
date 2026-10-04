@@ -49,3 +49,10 @@ next-env.d.ts
 # generated test artefacts
 /reports
 /public/test-report.html
+
+# lint hook log
+/.claude/lint-log.txt
+
+# Playwright E2E artefacts (generated)
+/test-results
+/playwright-report

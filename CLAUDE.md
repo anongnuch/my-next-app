@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 @AGENTS.md
 
+## ภาษา
+
+ตอบผู้ใช้เป็นภาษาไทยทุกครั้ง (ชื่อไฟล์, โค้ด, คำสั่ง และศัพท์เทคนิคคงเป็นภาษาอังกฤษได้)
+
 ## Commands
 
 ```bash
@@ -15,6 +19,9 @@ npm test            # vitest, backend suite (single run)
 npm run test:watch  # vitest in watch mode
 npm run test:coverage  # same, plus coverage/index.html
 npm run test:report    # writes public/test-report.html (/test-report.html)
+npm run test:e2e    # Playwright browser regression suite (builds and serves on :3100)
+npm run test:e2e:ui # same, in Playwright's interactive UI
+npm run test:e2e:report # open the last HTML report (playwright-report/)
 npm run db:reset    # delete the SQLite file; it re-seeds on next request
 npm run db:diagram  # regenerate the ER diagram from the live schema
 ```
@@ -52,6 +59,21 @@ The folder a test lives in is its type, and the report groups by it:
   `x-status: live` operation, must not exist for a `planned` one, and every route
   on disk must be described**. Implementing an endpoint without updating the spec
   fails here.
+
+### E2E tests (Playwright)
+
+`tests/e2e/*.spec.ts` drive the real UI in Chromium against a **production build**
+(`next build` + `next start` on :3100, started by `playwright.config.ts`) with its
+own database `data/e2e.db`, seeded on first request — never `data/farmart.db`.
+Vitest ignores this folder. Because it runs `next build`, **stop `npm run dev`
+first** (both write `.next`). First time on a machine: `npx playwright install chromium`.
+
+Specs: `home` (six sections over HTTP, one failure fails the page, skeleton),
+`product-tabs`, `search` (debounce, keyboard, submit), `products` (SSR filters and
+sorts as URLs), `add-to-cart` (toast, out-of-stock), `pages` (render, 404, and
+**no horizontal overflow at 375px** — the `min-w-0` regression), `api` (smoke).
+Selectors are role/name based; seed titles such as "Beef Bone Marrow Cut 500g"
+are asserted, so changing `app/lib/data.js` may need spec updates.
 
 ## Architecture
 
@@ -217,3 +239,15 @@ Route handlers live under `/api`.
   constraints that reject bad seed data.
 - **`PLAN.md`** is the phased product roadmap. New feature work is drawn from it;
   check which phase an item belongs to before widening scope into a later one.
+
+## graphify
+
+This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+
+graphify is an optional local tool, not a project dependency, and `graphify-out/` is untracked (generated). If `graphify` is not on PATH or `graphify-out/graph.json` does not exist (e.g. a fresh clone), skip the rules below and use normal search; the hooks in `.claude/settings.json` are no-ops when `graphify` is missing. To enable it, install graphify and run `graphify update .` to build the graph.
+
+Rules:
+- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
+- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
+- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
+- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).

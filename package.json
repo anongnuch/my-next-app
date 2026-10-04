@@ -12,7 +12,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "test:report": "vitest run --reporter=default --reporter=json --outputFile=reports/vitest.json --coverage && node scripts/generate-test-report.mjs"
+    "test:report": "vitest run --reporter=default --reporter=json --outputFile=reports/vitest.json --coverage && node scripts/generate-test-report.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
@@ -21,6 +24,7 @@
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "26.6.4",
     "@types/react": "19.3.0",
@@ -28,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
+    "typescript": "5.9.3",
     "vitest": "^5.0.3"
   }
 }

@@ -87,7 +87,7 @@ export default function SearchBox({ categories = [], query = "" }) {
   return (
     <div
       ref={wrapper}
-      className="relative order-3 w-full min-w-0 flex-1 lg:order-none lg:max-w-[560px]"
+      className="relative order-3 w-full min-w-0 lg:order-none lg:max-w-[560px] lg:flex-1"
     >
       <form className="flex h-11 items-center rounded border border-line" action="/products">
         <label className="sr-only" htmlFor="search-category">
