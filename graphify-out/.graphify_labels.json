@@ -1,0 +1,21 @@
+{
+  "0": "repository.ts",
+  "1": "package.json",
+  "2": "design/page.js",
+  "3": "DESIGN.md",
+  "4": "component-gallery.js",
+  "5": "db.ts",
+  "6": "product-card.js",
+  "7": "home-content.js",
+  "8": "spec-contract.test.ts",
+  "9": "generate-test-report.mjs",
+  "10": "compilerOptions",
+  "11": "Business Goals",
+  "12": "Architecture",
+  "13": "Onboarding and seed data",
+  "14": "README.md",
+  "15": "next.config.mjs",
+  "16": "AGENTS.md",
+  "17": "postcss.config.mjs",
+  "18": "block-destructive-bash.js"
+}
