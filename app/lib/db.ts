@@ -14,8 +14,13 @@ import {
 // SQLite file lives outside the app tree and is generated, not committed.
 // `app/lib/data.js` remains the seed source so the catalogue has one origin.
 // FARMART_DB_PATH lets the test suite point at a throwaway file instead.
+// On Vercel the deployment directory is read-only, so the DB goes in /tmp
+// (writable, per-instance). It is re-seeded from data.js on each cold start.
 const DB_PATH =
-  process.env.FARMART_DB_PATH ?? path.join(process.cwd(), "data", "farmart.db");
+  process.env.FARMART_DB_PATH ??
+  (process.env.VERCEL
+    ? path.join("/tmp", "farmart.db")
+    : path.join(process.cwd(), "data", "farmart.db"));
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS categories (
